@@ -44,5 +44,5 @@ export async function submitDecision(formData: FormData) {
     select: { id: true },
   });
 
-  redirect(`/decision/logs/${log.id}`);
+  redirect(`/decision/result/${log.id}`);
 }
