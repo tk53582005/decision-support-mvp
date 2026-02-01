@@ -2,6 +2,10 @@
 
 **仕様固定・ロジック固定**を守って作成したMVP（Minimum Viable Product）
 
+## デモ
+
+👉 https://decision-support-mvp.vercel.app
+
 ## プロジェクト概要
 
 このプロジェクトは、「案件受注/作業着手のGO/NO-GO判定」を行う判断支援ツールです。
@@ -19,9 +23,10 @@
 ## 技術スタック
 
 - **フロントエンド**: Next.js 16 (App Router) + TypeScript
-- **データベース**: Prisma + SQLite
+- **データベース**: Prisma + PostgreSQL（Neon）
 - **テスト**: Vitest
 - **スタイリング**: インラインCSS（最小限）
+- **デプロイ**: Vercel
 
 ## 判定ロジック仕様
 
@@ -64,6 +69,7 @@ EXIT ではない、かつ次のいずれかを満たす場合：
 
 - Node.js 18以上
 - npm または yarn
+- PostgreSQLデータベース（[Neon](https://neon.tech) の無料プランで可）
 
 ### インストール
 ```bash
@@ -73,6 +79,12 @@ cd decision-support-mvp
 
 # 依存関係のインストール
 npm install
+
+# .env ファイル作成
+cp .env.example .env
+
+# .env を開いて DATABASE_URL に PostgreSQL の接続URLを設定
+# DATABASE_URL=postgresql://...
 
 # Prismaマイグレーション
 npx prisma migrate dev --name init
@@ -107,11 +119,14 @@ decision-support-mvp/
 │       │   └── decisionActions.ts # Server Actions
 │       ├── decision/
 │       │   ├── new/              # 判定入力フォーム
+│       │   ├── result/[id]/      # 判定結果画面
 │       │   └── logs/             # 判定履歴（一覧・詳細）
 │       ├── layout.tsx
 │       └── page.tsx
 ├── prisma/
-│   └── schema.prisma             # Prismaスキーマ
+│   ├── schema.prisma             # Prismaスキーマ（PostgreSQL）
+│   └── migrations/               # マイグレーション履歴
+├── .env.example                  # 環境変数テンプレート
 └── README.md
 ```
 
@@ -134,14 +149,9 @@ TypeScriptの型システムを最大限活用し、以下を保証していま�
 - 回答は `YES` | `NO` | `UNKNOWN` に限定
 - 判定結果は `EXIT` | `HOLD` | `PROCEEDABLE` に限定
 
-## 今後の拡張（段階的アプローチ）
+## 今後の拡張
 
-### Phase 2: PostgreSQL化
-
-現在はSQLiteですが、本番環境ではPostgreSQLへの移行が可能です。
-Prismaスキーマを変更するだけで対応できます。
-
-### Phase 3: AWS デプロイ
+### AWS デプロイ
 
 以下の構成でAWSデプロイ可能：
 - **フロントエンド**: ECS Fargate（Next.js コンテナ）
