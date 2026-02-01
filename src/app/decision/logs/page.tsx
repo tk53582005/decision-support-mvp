@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import Link from "next/link";
 import { prisma } from "@/server/db";
 import { UI_TEXT } from "@/constants/uiText";
